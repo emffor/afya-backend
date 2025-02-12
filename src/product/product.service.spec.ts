@@ -13,11 +13,23 @@ describe('ProductService', () => {
         {
           provide: getModelToken(Product.name),
           useValue: {
-            create: jest.fn(),
-            find: jest.fn(),
-            findById: jest.fn(),
-            findByIdAndUpdate: jest.fn(),
-            findByIdAndDelete: jest.fn(),
+            create: jest.fn().mockResolvedValue({
+              _id: 'product_id',
+              name: 'Smartphone',
+              price: 2500,
+            }),
+            find: jest.fn().mockReturnValue({
+              exec: jest.fn().mockResolvedValue([]),
+            }),
+            findById: jest.fn().mockReturnValue({
+              exec: jest.fn().mockResolvedValue(null),
+            }),
+            findByIdAndUpdate: jest.fn().mockReturnValue({
+              exec: jest.fn().mockResolvedValue(null),
+            }),
+            findByIdAndDelete: jest.fn().mockReturnValue({
+              exec: jest.fn().mockResolvedValue(null),
+            }),
           },
         },
       ],
