@@ -108,14 +108,89 @@ describe('DashboardService', () => {
 
     it('should return default values when no results found', async () => {
       jest.spyOn(orderModel, 'aggregate').mockResolvedValueOnce([]);
-
       const result = await service.getMetrics({});
-
       expect(result).toEqual({
         totalOrders: 0,
         totalRevenue: 0,
         averageOrderValue: 0,
       });
+    });
+  });
+
+  describe('getOrdersByPeriod', () => {
+    it('should return orders grouped by period with daily grouping', async () => {
+      const mockOrdersByPeriod = [
+        { _id: '2023-01-01', count: 5 },
+        { _id: '2023-01-02', count: 7 },
+      ];
+      jest.spyOn(orderModel, 'aggregate').mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValueOnce(mockOrdersByPeriod),
+      } as any);
+
+      const result = await service.getOrdersByPeriod('daily');
+      expect(result).toEqual([
+        { period: '2023-01-01', count: 5 },
+        { period: '2023-01-02', count: 7 },
+      ]);
+      expect(orderModel.aggregate).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          {
+            $group: {
+              _id: { $dateToString: { format: "%Y-%m-%d", date: "$orderDate" } },
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { _id: 1 } },
+        ])
+      );
+    });
+
+    it('should return orders grouped by period with weekly grouping', async () => {
+      const mockOrdersByPeriod = [
+        { _id: '2023-01', count: 12 },
+      ];
+      jest.spyOn(orderModel, 'aggregate').mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValueOnce(mockOrdersByPeriod),
+      } as any);
+      const result = await service.getOrdersByPeriod('weekly');
+      expect(result).toEqual([
+        { period: '2023-01', count: 12 },
+      ]);
+      expect(orderModel.aggregate).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          {
+            $group: {
+              _id: { $dateToString: { format: "%Y-%U", date: "$orderDate" } },
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { _id: 1 } },
+        ])
+      );
+    });
+
+    it('should return orders grouped by period with monthly grouping', async () => {
+      const mockOrdersByPeriod = [
+        { _id: '2023-01', count: 20 },
+      ];
+      jest.spyOn(orderModel, 'aggregate').mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValueOnce(mockOrdersByPeriod),
+      } as any);
+      const result = await service.getOrdersByPeriod('monthly');
+      expect(result).toEqual([
+        { period: '2023-01', count: 20 },
+      ]);
+      expect(orderModel.aggregate).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          {
+            $group: {
+              _id: { $dateToString: { format: "%Y-%m", date: "$orderDate" } },
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { _id: 1 } },
+        ])
+      );
     });
   });
 });

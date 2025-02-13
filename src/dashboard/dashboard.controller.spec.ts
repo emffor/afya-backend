@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DashboardController } from './dashboard.controller';
 import { DashboardService } from './dashboard.service';
 import { DashboardFilterDto } from './dto/dashboard-filters.dto';
+import { OrdersByPeriod } from './interfaces/orders-by-period.interface';
 
 describe('DashboardController', () => {
   let controller: DashboardController;
@@ -19,6 +20,10 @@ describe('DashboardController', () => {
               totalRevenue: 1466,
               averageOrderValue: 488.67,
             }),
+            getOrdersByPeriod: jest.fn().mockResolvedValue([
+              { period: '2023-01-01', count: 5 },
+              { period: '2023-01-02', count: 7 },
+            ]),
           },
         },
       ],
@@ -46,5 +51,17 @@ describe('DashboardController', () => {
       averageOrderValue: 488.67,
     });
     expect(dashboardService.getMetrics).toHaveBeenCalledWith(filters);
+  });
+
+  it('should return orders by period', async () => {
+    const ordersMock: OrdersByPeriod[] = [
+      { period: '2023-01-01', count: 5 },
+      { period: '2023-01-02', count: 7 },
+    ];
+
+    const period = 'daily';
+    const result = await controller.getOrdersByPeriod(period);
+    expect(result).toEqual(ordersMock);
+    expect(dashboardService.getOrdersByPeriod).toHaveBeenCalledWith(period);
   });
 });
