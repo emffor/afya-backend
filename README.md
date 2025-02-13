@@ -35,9 +35,9 @@ docker-compose up -d
 
 O MongoDB estará disponível em: `mongodb://localhost:27017/afyadb`
 
-### 4. População do Banco de Dados
+### 4. População em massa do Banco de Dados
 
-Para popular o banco com dados de teste:
+Para popular em massa o banco com dados de teste:
 
 ```bash
 yarn seed
