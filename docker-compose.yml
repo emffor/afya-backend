@@ -8,8 +8,10 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    networks:
+      - afyadb-network
     healthcheck:
-      test: [ "CMD-SHELL", "mongo --eval 'db.runCommand({ ping: 1 })'" ]
+      test: [ "CMD-SHELL", "mongosh --quiet --eval \"db.runCommand({ ping: 1 }).ok\" | grep 1" ]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -23,13 +25,17 @@ services:
     environment:
       - SERVICES=s3
       - DEFAULT_REGION=us-east-1
-      - DATA_DIR=/tmp/localstack/data
+      - DATA_DIR=/tmp/localstack_data
+      - EDGE_PORT=4566
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
+      - DEBUG=1
     volumes:
-      - "./localstack:/tmp/localstack"
+      - localstack_data:/tmp/localstack_data
+    networks:
+      - afyadb-network
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:4566/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:4566/_localstack/health || exit 1" ]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -43,12 +49,23 @@ services:
     environment:
       - MONGO_URI=mongodb://mongodb:27017/afyadb
       - S3_ENDPOINT=http://localstack:4566
+      - AWS_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
       - S3_BUCKET=my-bucket
     depends_on:
-      - mongodb
-      - localstack
+      mongodb:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+    networks:
+      - afyadb-network
 
 volumes:
   mongo_data:
+  localstack_data:
+
+
+networks:
+  afyadb-network:
+    driver: bridge

@@ -1,28 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { S3 } from 'aws-sdk';
+import { S3Client, HeadBucketCommand, CreateBucketCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 
 @Injectable()
 export class S3Service {
-  private s3: S3;
-  private bucketName: string = process.env.S3_BUCKET || 'my-bucket';
+  private s3: S3Client;
+  private bucketName: string = "my-bucket";  
 
   constructor() {
-    this.s3 = new S3({
-      endpoint: process.env.S3_ENDPOINT || 'http://localhost:4566',
-      s3ForcePathStyle: true, 
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID || 'test',
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || 'test',
-      region: process.env.AWS_REGION || 'us-east-1',
+    this.s3 = new S3Client({
+      endpoint: "http://localstack:4566",  
+      region: "us-east-1",  
+      credentials: {
+        accessKeyId: "test",  
+        secretAccessKey: "test", 
+      },
+      forcePathStyle: true,
     });
   }
 
   async createBucketIfNotExists(): Promise<void> {
     try {
-      await this.s3.headBucket({ Bucket: this.bucketName }).promise();
-      // O bucket já existe
+      await this.s3.send(new HeadBucketCommand({ Bucket: this.bucketName }));
     } catch (error) {
-      if (error.statusCode === 404) {
-        await this.s3.createBucket({ Bucket: this.bucketName }).promise();
+      if (error.name === 'NotFound') {
+        await this.s3.send(new CreateBucketCommand({ Bucket: this.bucketName }));
       }
     }
   }
@@ -30,15 +31,14 @@ export class S3Service {
   async uploadFile(fileBuffer: Buffer, fileName: string, contentType: string): Promise<string> {
     await this.createBucketIfNotExists();
 
-    const params: S3.PutObjectRequest = {
+    const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: fileName,
       Body: fileBuffer,
       ContentType: contentType,
-    };
+    });
 
-    const result = await this.s3.upload(params).promise();
-
-    return result.Location; 
+    await this.s3.send(command);
+    return `http://localhost:4566/${this.bucketName}/${fileName}`;  
   }
 }
