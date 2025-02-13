@@ -17,9 +17,9 @@ async function seed() {
     console.log('Limpando dados antigos...');
     await mongoose.connection.db.dropDatabase();
 
-    const categoriesData = Array(5).fill(null).map(() => ({
+    const categoriesData = Array.from({ length: 5 }, () => ({
       name: faker.commerce.department(),
-      description: faker.commerce.productDescription()
+      description: faker.commerce.productDescription(),
     }));
 
     const CategoryModel = mongoose.model('Category', CategorySchema);
@@ -31,12 +31,16 @@ async function seed() {
       console.error('Erro ao criar categorias:', error);
     }
 
-    const productsData = Array(10).fill(null).map(() => ({
+    if (!createdCategories.length) {
+      throw new Error('Nenhuma categoria foi criada. Abortando o seed.');
+    }
+
+    const productsData = Array.from({ length: 20 }, () => ({
       name: faker.commerce.productName(),
       description: faker.commerce.productDescription(),
-      price: Number(faker.commerce.price({ min: 10, max: 1000 })),
-      category: faker.helpers.arrayElement(createdCategories)?._id,
-      imageUrl: faker.image.url()
+      price: Number(faker.commerce.price({ min: 10, max: 200000 })),
+      category: faker.helpers.arrayElement(createdCategories)._id,
+      imageUrl: faker.image.url(),
     }));
 
     const ProductModel = mongoose.model('Product', ProductSchema);
@@ -48,24 +52,23 @@ async function seed() {
       console.error('Erro ao criar produtos:', error);
     }
 
-    const ordersData = Array(8).fill(null).map(() => {
+    const ordersData = Array.from({ length: 100 }, () => {
       const selectedProducts = faker.helpers.arrayElements(
         createdProducts.map(p => p._id),
         { min: 1, max: 3 }
       );
-      
+
       const total = selectedProducts.reduce((acc, productId) => {
         const product = createdProducts.find(p => p._id.toString() === productId.toString());
         return acc + (product ? product.price : 0);
       }, 0);
 
+      const orderDate = faker.date.between({ from: '2022-01-01', to: '2025-02-13' });
+
       return {
         products: selectedProducts,
-        total: total,
-        orderDate: faker.date.between({
-          from: '2023-01-01',
-          to: new Date()
-        })
+        total,
+        orderDate,
       };
     });
 
