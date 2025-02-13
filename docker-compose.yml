@@ -5,7 +5,7 @@ services:
     container_name: mongodb
     restart: always
     ports:
-      - '27017:27017'
+      - "27017:27017"
     volumes:
       - mongo_data:/data/db
     healthcheck:
@@ -19,7 +19,7 @@ services:
     container_name: localstack
     restart: always
     ports:
-      - '4566:4566'
+      - "4566:4566"
     environment:
       - SERVICES=s3
       - DEFAULT_REGION=us-east-1
@@ -39,7 +39,7 @@ services:
     container_name: nestjs
     restart: always
     ports:
-      - '3000:3000'
+      - "3000:3000"
     environment:
       - MONGO_URI=mongodb://mongodb:27017/afyadb
       - S3_ENDPOINT=http://localstack:4566
