@@ -72,6 +72,28 @@ serverless offline start
 ## Endpoints Disponíveis
 
 - GET `/process-sales` - Processa relatório de vendas
+- GET `/api` - Documentação Swagger UI
+
+## Documentação da API (Swagger)
+
+O projeto possui documentação interativa das APIs através do Swagger UI.
+Para acessar a documentação:
+
+1. Inicie o servidor:
+```bash
+yarn start:dev
+```
+
+2. Acesse no navegador:
+```
+http://localhost:3000/api
+```
+
+A interface do Swagger permite:
+- Visualizar todos os endpoints disponíveis
+- Testar as APIs diretamente pelo navegador
+- Ver os modelos de dados e schemas
+- Verificar os parâmetros necessários para cada rota
 
 ## Scripts Disponíveis
 
@@ -119,3 +141,4 @@ docker-compose down -v
 # Iniciar novamente
 docker-compose up -d
 ```
+````
