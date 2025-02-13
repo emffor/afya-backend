@@ -17,3 +17,10 @@ docker-compose up -d
 
 # Executar o seed para popular o banco com dados de teste
 yarn seed
+
+# Iniciar o servidor local
+yarn start
+
+# OU usando diretamente o serverless
+serverless offline start
+npx serverless offline

@@ -1,0 +1,20 @@
+service: sales-reports
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: dev
+  environment:
+    MONGO_URI: ${env:MONGO_URI, 'mongodb://localhost:27017/afyadb'}
+
+functions:
+  processSales:
+    handler: handler.processSales
+    events:
+      - http:
+          path: process-sales
+          method: get
+
+plugins:
+  - serverless-offline
