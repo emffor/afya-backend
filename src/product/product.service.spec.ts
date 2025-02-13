@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProductService } from './product.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Product } from './product.schema';
+import { Model } from 'mongoose';
 
 describe('ProductService', () => {
   let service: ProductService;
@@ -19,10 +20,14 @@ describe('ProductService', () => {
               price: 2500,
             }),
             find: jest.fn().mockReturnValue({
-              exec: jest.fn().mockResolvedValue([]),
+              populate: jest.fn().mockReturnValue({
+                exec: jest.fn().mockResolvedValue([]),
+              }),
             }),
             findById: jest.fn().mockReturnValue({
-              exec: jest.fn().mockResolvedValue(null),
+              populate: jest.fn().mockReturnValue({
+                exec: jest.fn().mockResolvedValue(null),
+              }),
             }),
             findByIdAndUpdate: jest.fn().mockReturnValue({
               exec: jest.fn().mockResolvedValue(null),
