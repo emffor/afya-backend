@@ -8,6 +8,47 @@ services:
       - '27017:27017'
     volumes:
       - mongo_data:/data/db
+    healthcheck:
+      test: [ "CMD-SHELL", "mongo --eval 'db.runCommand({ ping: 1 })'" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    restart: always
+    ports:
+      - '4566:4566'
+    environment:
+      - SERVICES=s3
+      - DEFAULT_REGION=us-east-1
+      - DATA_DIR=/tmp/localstack/data
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+    volumes:
+      - "./localstack:/tmp/localstack"
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:4566/health || exit 1" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  nestjs:
+    build: .
+    container_name: nestjs
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/afyadb
+      - S3_ENDPOINT=http://localstack:4566
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - S3_BUCKET=my-bucket
+    depends_on:
+      - mongodb
+      - localstack
 
 volumes:
   mongo_data:
