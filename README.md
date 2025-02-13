@@ -55,10 +55,7 @@ Você tem duas opções para executar o projeto:
 ### Opção 1: Usando NestJS
 ```bash
 # Modo desenvolvimento
-yarn start:dev
-
-# Modo produção
-yarn start:prod
+yarn start
 ```
 
 ### Opção 2: Usando Serverless Offline
@@ -71,7 +68,6 @@ serverless offline start
 
 ## Endpoints Disponíveis
 
-- GET `/process-sales` - Processa relatório de vendas
 - GET `/api` - Documentação Swagger UI
 
 ## Documentação da API (Swagger)
@@ -81,10 +77,10 @@ Para acessar a documentação:
 
 1. Inicie o servidor:
 ```bash
-yarn start:dev
+yarn start
 ```
 
-2. Acesse no navegador:
+2. Acesse no navegador ROTAS:
 ```
 http://localhost:3000/api
 ```
@@ -94,15 +90,6 @@ A interface do Swagger permite:
 - Testar as APIs diretamente pelo navegador
 - Ver os modelos de dados e schemas
 - Verificar os parâmetros necessários para cada rota
-
-## Scripts Disponíveis
-
-- `yarn start` - Inicia o servidor NestJS
-- `yarn start:dev` - Inicia o servidor em modo desenvolvimento
-- `yarn test` - Executa testes unitários
-- `yarn test:e2e` - Executa testes end-to-end
-- `yarn lint` - Executa verificação de código
-- `yarn format` - Formata o código
 
 ## Estrutura do Projeto
 
@@ -119,12 +106,6 @@ A interface do Swagger permite:
 ```bash
 # Executar testes unitários
 yarn test
-
-# Executar testes com coverage
-yarn test:cov
-
-# Executar testes e2e
-yarn test:e2e
 ```
 
 ## Docker
