@@ -119,7 +119,10 @@ docker-compose down
 # Remover volumes (caso necessário)
 docker-compose down -v
 
-# Iniciar novamente
-docker-compose up -d
+# Build sem cache para o serviço nestjs
+docker compose build --no-cache nestjs
+
+# Iniciar os containers
+docker compose up -d
 ```
 ````
