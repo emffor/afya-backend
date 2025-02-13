@@ -50,6 +50,7 @@ export class ProductController {
   async remove(@Param('id') id: string) {
     return this.productService.remove(id);
   }
+
   @Post('upload-image')
   @UseInterceptors(FileInterceptor('file'))
   async uploadImage(@UploadedFile() file: File) {

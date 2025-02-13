@@ -4,15 +4,15 @@ import { S3Client, HeadBucketCommand, CreateBucketCommand, PutObjectCommand } fr
 @Injectable()
 export class S3Service {
   private s3: S3Client;
-  private bucketName: string = "my-bucket";  
+  private bucketName: string = process.env.S3_BUCKET || 'my-bucket';
 
   constructor() {
     this.s3 = new S3Client({
-      endpoint: "http://localstack:4566",  
-      region: "us-east-1",  
+      endpoint: process.env.S3_ENDPOINT || 'http://localstack:4566',
+      region: process.env.AWS_REGION || 'us-east-1',
       credentials: {
-        accessKeyId: "test",  
-        secretAccessKey: "test", 
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID || 'test',
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || 'test',
       },
       forcePathStyle: true,
     });
@@ -21,8 +21,8 @@ export class S3Service {
   async createBucketIfNotExists(): Promise<void> {
     try {
       await this.s3.send(new HeadBucketCommand({ Bucket: this.bucketName }));
-    } catch (error) {
-      if (error.name === 'NotFound') {
+    } catch (error: any) {
+      if (error.name === 'NotFound' || error.$metadata?.httpStatusCode === 404) {
         await this.s3.send(new CreateBucketCommand({ Bucket: this.bucketName }));
       }
     }
@@ -39,6 +39,7 @@ export class S3Service {
     });
 
     await this.s3.send(command);
-    return `http://localhost:4566/${this.bucketName}/${fileName}`;  
+
+    return `${process.env.S3_ENDPOINT || 'http://localstack:4566'}/${this.bucketName}/${fileName}`;
   }
 }

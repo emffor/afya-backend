@@ -25,18 +25,15 @@ export class ProductService {
       .findById(id)
       .populate('category')
       .exec();
-    if (!product) throw new NotFoundException('Produto não encontrado');
+    if (!product) throw new NotFoundException('Product not found');
     return product;
   }
 
-  async update(
-    id: string,
-    updateProductDto: UpdateProductDto,
-  ): Promise<Product> {
+  async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
     const updated = await this.productModel
       .findByIdAndUpdate(id, updateProductDto, { new: true })
       .exec();
-    if (!updated) throw new NotFoundException('Produto não encontrado');
+    if (!updated) throw new NotFoundException('Product not found');
     return updated;
   }
 
@@ -44,8 +41,7 @@ export class ProductService {
     const deleted: ProductDocument | null = await this.productModel
       .findByIdAndDelete(id)
       .exec();
-
-    if (!deleted) throw new NotFoundException('Produto não encontrado');
+    if (!deleted) throw new NotFoundException('Product not found');
     return deleted;
   }
 }

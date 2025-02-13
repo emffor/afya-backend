@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsOptional } from 'class-validator';
 
 export class CreateProductDto {
   @IsNotEmpty()
@@ -13,4 +12,8 @@ export class CreateProductDto {
   @IsNotEmpty()
   @IsString()
   readonly category: string;
+
+  @IsOptional()
+  @IsString()
+  readonly imageUrl?: string; 
 }
