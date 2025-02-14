@@ -2,6 +2,10 @@
 
 Este é um projeto backend que utiliza NestJS, MongoDB e Serverless Framework para processar relatórios de vendas.
 
+## 🎥 Demo da Aplicação
+
+[![Assista ao vídeo da demonstração](https://img.youtube.com/vi/nCvctiUvKr8/maxresdefault.jpg)](https://youtu.be/nCvctiUvKr8)
+
 ## Pré-requisitos
 
 Certifique-se de ter instalado em sua máquina:
