@@ -19,7 +19,7 @@ Certifique-se de ter instalado em sua máquina:
 
 ### 1. Clone o repositório
 ```bash
-git clone https://github.com/emffor/afya-teste-backend.git
+git clone https://github.com/emffor/afya-backend.git
 cd afya-teste-backend
 ```
 
